@@ -1,0 +1,44 @@
+<resources>
+    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Eureka Kids</string>
+    <string name="title_string">Eureka Kids - Skill tracker</string>
+    <string name="go_on">Go</string>
+    <string name="action_settings">Settings</string>
+    <string name="sel_center">Select center</string>
+    <string name="list_children">List of Children</string>
+    <string name="add_kid">Add Child</string>
+    <string name="edit_skill">Edit skill</string>
+    <string name="District">District:</string>
+    <string name="Village">Village:</string>
+    <string name="Block">Block:</string>
+    <string name="Center">Center:</string>
+    <string name="CenterID">Center ID:</string>
+    <string name="Next">Next</string>
+    <string name="nav_sub_1">Tamil</string>
+    <string name="nav_sub_2">English</string>
+    <string name="nav_sub_3">Maths</string>
+    <string name="openDrawer">Open Drawer </string>
+    <string name="closeDrawer">Close Drawer </string>
+    <string name="tam_skill_1">Letters</string>
+    <string name="tam_skill_2">Words</string>
+    <string name="tam_skill_3">Sentence</string>
+    <string name="tam_skill_4">Simple story</string>
+    <string name="tam_skill_5">Story</string>
+    <string name="tam_skill_6">Story Comp</string>
+    <string name="eng_skill_1">Letter Sound</string>
+    <string name="eng_skill_2">Letter word(A,E,I)</string>
+    <string name="eng_skill_3">Letter word(O,U)</string>
+    <string name="eng_skill_4">Sight Word 1</string>
+    <string name="eng_skill_5">Sight Word 2</string>
+    <string name="eng_skill_6">Simple Sentence</string>
+    <string name="math_skill_1">Mental</string>
+    <string name="math_skill_2">3D+</string>
+    <string name="math_skill_3">3D-</string>
+    <string name="math_skill_4">2Dx1D</string>
+    <string name="math_skill_5">2Dx2D</string>
+    <string name="math_skill_6">3D/1D</string>
+    <string name="math_skill_7">Fraction</string>
+    <string name="math_skill_8">Fraction-Op</string>
+
+</resources>
+

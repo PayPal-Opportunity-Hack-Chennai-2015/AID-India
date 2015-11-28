@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></include>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:text="Enter Your Details"
+        android:id="@+id/details"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Name"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/Name"
+        android:textSize="20dp"
+        />
+
+    <EditText
+        android:layout_marginLeft="100dp"
+
+        android:layout_marginTop="15dp"
+        android:layout_height="45dp"
+        android:layout_width="150dp"
+        android:id="@+id/editname" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Class"
+        android:layout_marginLeft="100dp"
+        android:id="@+id/Address"
+        android:textSize="20dp"
+        />
+
+    <EditText
+        android:layout_marginLeft="100dp"
+
+        android:layout_marginTop="5dp"
+        android:layout_height="45dp"
+        android:layout_width="150dp"
+        android:id="@+id/editadd" />
+
+
+
+    <Button
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/save"
+        android:onClick="movetoList"/>
+</LinearLayout>
