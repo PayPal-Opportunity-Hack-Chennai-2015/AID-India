@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
 
 import com.eurekakids.com.eurekakids.db.DatabaseHandler;
+import com.eurekakids.db.datamodel.Block;
 import com.eurekakids.db.datamodel.District;
 import com.eurekakids.http.Httphandler;
 
@@ -34,8 +35,14 @@ public class Spinnerscreen extends AppCompatActivity {
     private Spinner Centerspinner;
     private TextView Centerid;
     private Toolbar toolbar;
+	DatabaseHandler db;
 
-    @Override
+	ArrayAdapter<String> DistrictspinnerAdapter;
+	ArrayAdapter<String> VillagespinnerAdapter;
+	ArrayAdapter<String> BlockspinnerAdapter;
+	ArrayAdapter<String> CenterspinnerAdapter;
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.spinner_value);
@@ -43,6 +50,8 @@ public class Spinnerscreen extends AppCompatActivity {
         setSupportActionBar(toolbar);
         addItemsToDisttrictSpinner();
         addListenerDistrictSpinner();
+
+		db = new DatabaseHandler(this);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,13 +109,14 @@ public class Spinnerscreen extends AppCompatActivity {
 //        Blockspinner.setAdapter(BlockspinnerAdapter);
 //        Centerspinner.setAdapter(CenterspinnerAdapter);
 
-		DatabaseHandler db = new DatabaseHandler(this);
+
 		List<District> districts = db.getAllDistricts();
+
 		String[] values = new String[districts.size()];
 		for(int i =0; i<values.length; i++){
 			values[i] = districts.get(i).getDistrictName();
 		}
-		ArrayAdapter<String> DistrictspinnerAdapter = new ArrayAdapter<String>(this,
+		DistrictspinnerAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, android.R.id.text1, values);
 		DistrictspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		Districtspinner.setAdapter(DistrictspinnerAdapter);
@@ -123,6 +133,16 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       @Override
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
+
+														  List<Block> blocks = db.getAllBlocks();
+														  String[] values = new String[blocks.size()];
+														  for(int i =0; i<values.length; i++){
+															  values[i] = blocks.get(i).getBlockName();
+														  }
+														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
+																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
+														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+														  Villagespinner.setAdapter(VillagespinnerAdapter);
                                                       }
 
                                                       @Override
@@ -138,6 +158,16 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       @Override
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
+
+														  List<Block> blocks = db.getAllBlocks();
+														  String[] values = new String[blocks.size()];
+														  for(int i =0; i<values.length; i++){
+															  values[i] = blocks.get(i).getBlockName();
+														  }
+														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
+																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
+														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+														  Villagespinner.setAdapter(VillagespinnerAdapter);
                                                       }
 
                                                       @Override
