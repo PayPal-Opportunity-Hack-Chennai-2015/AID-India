@@ -40,4 +40,4 @@ class SkillSerializer(serializers.ModelSerializer):
 class AssessmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assessment
-        fields = ('child_id', 'skill_id')
+        fields = ('child_id', 'skill_id', 'is_completed')
