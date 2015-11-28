@@ -19,7 +19,11 @@ import android.widget.Spinner;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
 
+import com.eurekakids.com.eurekakids.db.DatabaseHandler;
+import com.eurekakids.db.datamodel.District;
 import com.eurekakids.http.Httphandler;
+
+import java.util.List;
 
 
 public class Spinnerscreen extends AppCompatActivity {
@@ -62,7 +66,8 @@ public class Spinnerscreen extends AppCompatActivity {
         } else if (id == R.id.action_refresh) {
 			Httphandler httphandler = new Httphandler(this);
 			httphandler.getAllDistricts();
-
+            httphandler.getAllBlocks();
+            httphandler.getAllVillages();
 			return true;
 		}
 
@@ -81,25 +86,34 @@ public class Spinnerscreen extends AppCompatActivity {
         Centerspinner = (Spinner) findViewById(R.id.center_spinner);
         Centerid = (TextView) findViewById(R.id.cid);
 
-        ArrayAdapter<CharSequence> DistrictspinnerAdapter = ArrayAdapter.createFromResource(this,R.array.dis,android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> VillagespinnerAdapter = ArrayAdapter.createFromResource(this,R.array.vil,android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> BlockspinnerAdapter = ArrayAdapter.createFromResource(this,R.array.bloc,android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> CenterspinnerAdapter = ArrayAdapter.createFromResource(this,R.array.cen,android.R.layout.simple_spinner_item);
+//        ArrayAdapter<CharSequence> DistrictspinnerAdapter = ArrayAdapter.createFromResource(this,R.array.dis,android.R.layout.simple_spinner_item);
+//        ArrayAdapter<CharSequence> VillagespinnerAdapter = ArrayAdapter.createFromResource(this,R.array.vil,android.R.layout.simple_spinner_item);
+//        ArrayAdapter<CharSequence> BlockspinnerAdapter = ArrayAdapter.createFromResource(this,R.array.bloc,android.R.layout.simple_spinner_item);
+//        ArrayAdapter<CharSequence> CenterspinnerAdapter = ArrayAdapter.createFromResource(this,R.array.cen,android.R.layout.simple_spinner_item);
+//
+//        DistrictspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        BlockspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        CenterspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        Districtspinner.setAdapter(DistrictspinnerAdapter);
+//        Villagespinner.setAdapter(VillagespinnerAdapter);
+//        Blockspinner.setAdapter(BlockspinnerAdapter);
+//        Centerspinner.setAdapter(CenterspinnerAdapter);
 
-        DistrictspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        BlockspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        CenterspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		DatabaseHandler db = new DatabaseHandler(this);
+		List<District> districts = db.getAllDistricts();
+		String[] values = new String[districts.size()];
+		for(int i =0; i<values.length; i++){
+			values[i] = districts.get(i).getDistrictName();
+		}
+		ArrayAdapter<String> DistrictspinnerAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, android.R.id.text1, values);
+		DistrictspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		Districtspinner.setAdapter(DistrictspinnerAdapter);
+	}
 
-        Districtspinner.setAdapter(DistrictspinnerAdapter);
-        Villagespinner.setAdapter(VillagespinnerAdapter);
-        Blockspinner.setAdapter(BlockspinnerAdapter);
-        Centerspinner.setAdapter(CenterspinnerAdapter);
-
-    }
-
-    public void addListenerDistrictSpinner()
-    {
+    public void addListenerDistrictSpinner(){
         Districtspinner = (Spinner) findViewById(R.id.name_spinner);
         Villagespinner = (Spinner) findViewById(R.id.village_spinner);
         Blockspinner    =  (Spinner) findViewById(R.id.block_spinner);

@@ -28,6 +28,8 @@ public class Httphandler {
 	Context context;
 	private String SERVER_BASE_URL = "http://192.168.117.55:5555";
 	private final String GET_DISTRICT = "/district";
+    private final String GET_BLOCK = "/block";
+    private final String GET_VILLAGE = "/village";
 	private String TAG = "Http error";
 	public Httphandler(Context context){
 		this.context = context;
@@ -35,9 +37,18 @@ public class Httphandler {
 
 	public void getAllDistricts(){
 		final String url = SERVER_BASE_URL + GET_DISTRICT;
-
 		new AsyncHttpTask().execute(url, GET_DISTRICT);
 	}
+
+    public void getAllBlocks(){
+        final String url = SERVER_BASE_URL + GET_BLOCK;
+        new AsyncHttpTask().execute(url, GET_BLOCK);
+    }
+
+    public void getAllVillages(){
+        final String url = SERVER_BASE_URL + GET_VILLAGE;
+        new AsyncHttpTask().execute(url, GET_VILLAGE);
+    }
 
 	public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 
@@ -53,7 +64,6 @@ public class Httphandler {
 				URL url = new URL(params[0]);
 				String type = params[1];
 				urlConnection = (HttpURLConnection) url.openConnection();
-
                  /* optional request header */
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 
@@ -104,6 +114,17 @@ public class Httphandler {
 					break;
 				}
 
+                case GET_BLOCK:{
+                    DatabaseHandler db = new DatabaseHandler(context);
+                    db.addBlocks(jsonResponse);
+                    break;
+                }
+
+                case GET_VILLAGE:{
+                    DatabaseHandler db = new DatabaseHandler(context);
+                    db.addVillages(jsonResponse);
+                    break;
+                }
 			}
 		}catch (JSONException e){
 			e.printStackTrace();

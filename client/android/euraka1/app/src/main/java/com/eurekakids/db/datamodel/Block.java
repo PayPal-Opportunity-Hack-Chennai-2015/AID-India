@@ -4,6 +4,14 @@ public class Block {
 	private int district_id;
 	private int block_id;
 	private String block_name;
+    public Block(int district_id, int block_id, String block_name){
+        this.block_id=block_id;
+        this.district_id=district_id;
+        this.block_name=block_name;
+    }
+    public Block(){
+
+    }
 	public int getDistrictId() {
 		return district_id;
 	}
