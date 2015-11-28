@@ -104,7 +104,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}catch (JSONException e){
 			Log.e(TAG, e.getLocalizedMessage());
 		}
-		getAllDistricts();
 	}
 
 	private void addDistricts(List<District> districts) {
