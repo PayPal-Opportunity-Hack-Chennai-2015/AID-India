@@ -64,7 +64,7 @@ public class Httphandler {
 				URL url = new URL(params[0]);
 				String type = params[1];
 				urlConnection = (HttpURLConnection) url.openConnection();
-gi
+
                  /* optional request header */
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 

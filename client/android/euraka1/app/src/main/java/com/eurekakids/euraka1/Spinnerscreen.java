@@ -51,7 +51,7 @@ public class Spinnerscreen extends AppCompatActivity {
         addItemsToDisttrictSpinner();
         addListenerDistrictSpinner();
 
-		db = new DatabaseHandler(this);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,7 +110,7 @@ public class Spinnerscreen extends AppCompatActivity {
 //        Blockspinner.setAdapter(BlockspinnerAdapter);
 //        Centerspinner.setAdapter(CenterspinnerAdapter);
 
-
+		db = new DatabaseHandler(this);
 		List<District> districts = db.getAllDistricts();
 
 		String[] values = new String[districts.size()];
@@ -135,15 +135,15 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
 
-														  List<Block> blocks = db.getAllBlocks();
+														  List<Block> blocks = db.getAllBlocksByDistrict(itemSelected);
 														  String[] values = new String[blocks.size()];
 														  for(int i =0; i<values.length; i++){
 															  values[i] = blocks.get(i).getBlockName();
 														  }
-														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
+														  BlockspinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
 																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
-														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-														  Villagespinner.setAdapter(VillagespinnerAdapter);
+														  BlockspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+														  Blockspinner.setAdapter(BlockspinnerAdapter);
                                                       }
 
                                                       @Override
@@ -160,15 +160,15 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
 
-														  List<Block> blocks = db.getAllBlocks();
-														  String[] values = new String[blocks.size()];
-														  for(int i =0; i<values.length; i++){
-															  values[i] = blocks.get(i).getBlockName();
-														  }
-														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
-																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
-														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-														  Villagespinner.setAdapter(VillagespinnerAdapter);
+//														  List<Block> blocks = db.getAllBlocks();
+//														  String[] values = new String[blocks.size()];
+//														  for(int i =0; i<values.length; i++){
+//															  values[i] = blocks.get(i).getBlockName();
+//														  }
+//														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
+//																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
+//														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//														  Villagespinner.setAdapter(VillagespinnerAdapter);
                                                       }
 
                                                       @Override

@@ -26,7 +26,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private String TAG = "SQL ERROR";
 	// Database Name
 	private static final String DATABASE_NAME = "offline_db";
@@ -53,9 +53,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// Creating Tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_DISTRICT + "("
+		String CREATE_DISTRICT_TABLE = "CREATE TABLE " + TABLE_DISTRICT + "("
 				+ DISTRICT_ID + " INTEGER PRIMARY KEY," + DISTRICT_NAME + " TEXT" + ")";
-		db.execSQL(CREATE_CONTACTS_TABLE);
+		db.execSQL(CREATE_DISTRICT_TABLE);
+
+		String CREATE_BLOCK_TABLE = "CREATE TABLE " + TABLE_BLOCK + "("
+				+ DISTRICT_ID + " INTEGER, " + BLOCK_ID + " INTEGER PRIMARY KEY, "+ BLOCK_NAME + " TEXT, " +
+				" FOREIGN KEY ("+ DISTRICT_ID + ") REFERENCES " + TABLE_DISTRICT + "(" + DISTRICT_ID + "));";
+
+//		+ " FOREIGN KEY ("+TASK_CAT+") REFERENCES "+CAT_TABLE+"("+CAT_ID+"));";
+		db.execSQL(CREATE_BLOCK_TABLE);
 	}
 
 	// Upgrading database
@@ -91,15 +98,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public List<Block> getAllBlocksByDistrict(String district_name) {
         List<Block> blocks = new ArrayList<Block>();
-        String selectQuery1 = "SELECT  * FROM " + TABLE_DISTRICT + " WHERE " + DISTRICT_NAME + " = " + district_name ;
-        SQLiteDatabase db1 = this.getWritableDatabase();
-        Cursor cursor1 = db1.rawQuery(selectQuery1, null);
+        String selectQuery1 = "SELECT  * FROM " + TABLE_DISTRICT + " WHERE " + DISTRICT_NAME + " = '" + district_name +"';";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor1 = db.rawQuery(selectQuery1, null);
         cursor1.moveToFirst();
 
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BLOCK + " WHERE " + DISTRICT_ID + " = " + cursor1.getInt(0) ;
 
-        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
@@ -183,7 +189,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
             db.setTransactionSuccessful();
         } catch (Exception e){
-            int i=0;
             Log.e(TAG, e.getLocalizedMessage());
         }finally {
             db.endTransaction();
