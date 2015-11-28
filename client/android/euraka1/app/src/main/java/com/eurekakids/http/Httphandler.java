@@ -64,7 +64,6 @@ public class Httphandler {
 				URL url = new URL(params[0]);
 				String type = params[1];
 				urlConnection = (HttpURLConnection) url.openConnection();
-gi
                  /* optional request header */
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 
@@ -118,6 +117,12 @@ gi
                 case GET_BLOCK:{
                     DatabaseHandler db = new DatabaseHandler(context);
                     db.addBlocks(jsonResponse);
+                    break;
+                }
+
+                case GET_VILLAGE:{
+                    DatabaseHandler db = new DatabaseHandler(context);
+                    db.addVillages(jsonResponse);
                     break;
                 }
 			}
