@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.eurekakids.db.datamodel.Block;
 import com.eurekakids.db.datamodel.District;
 
 import org.json.JSONArray;
@@ -42,8 +43,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// Contacts Table Columns names
 	private static final String DISTRICT_ID = "district_id";
 	private static final String DISTRICT_NAME = "district_name";
+    private static final String BLOCK_ID = "block_id";
+    private static final String BLOCK_NAME = "block_name";
 
-	public DatabaseHandler(Context context) {
+    public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
@@ -83,10 +86,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				districts.add(district);
 			} while (cursor.moveToNext());
 		}
-
-		// return contact list
 		return districts;
 	}
+
+    public List<Block> getAllBlocks() {
+        List<Block> blocks = new ArrayList<Block>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_BLOCK;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Block block = new Block();
+                block.setDistrictId(cursor.getInt(0));
+                block.setBlockId(cursor.getInt(1));
+                block.setBlockName(cursor.getString(2));
+
+                blocks.add(block);
+            } while (cursor.moveToNext());
+        }
+        return blocks;
+    }
 
 	public void addDistricts(JSONArray response) {
 		ArrayList<District> districts = new ArrayList<>();
@@ -107,21 +130,64 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	private void addDistricts(List<District> districts) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		db.execSQL("delete from "+ TABLE_DISTRICT);
-		db.beginTransaction();
-		try {
-			for(District district : districts) {
-				String sqlQuery = "INSERT INTO " + TABLE_DISTRICT +" VALUES('"+ district.getDistrictId() + "',' "+ district.getDistrictName() + "')";
-				db.execSQL(sqlQuery);
-			}
-			db.setTransactionSuccessful();
-		} catch (Exception e){
-			int i=0;
-			Log.e(TAG, e.getLocalizedMessage());
-		}finally {
-			db.endTransaction();
-		}
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_DISTRICT);
+        db.beginTransaction();
+        try {
+            for (District district : districts) {
+                String sqlQuery = "INSERT INTO " + TABLE_DISTRICT + " VALUES('" + district.getDistrictId() + "',' " + district.getDistrictName() + "')";
+                db.execSQL(sqlQuery);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            int i = 0;
+            Log.e(TAG, e.getLocalizedMessage());
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void addBlocks(JSONArray response) {
+        ArrayList<Block> blocks = new ArrayList<>();
+        try {
+            for (int i = 0; i < response.length(); i++) {
+
+                JSONObject jsonobject = response.getJSONObject(i);
+                int district_id = jsonobject.getInt(DISTRICT_ID);
+                int block_id = jsonobject.getInt(BLOCK_ID);
+                String block_name = jsonobject.getString(BLOCK_NAME);
+                blocks.add(new Block(district_id,block_id,block_name));
+            }
+
+            addBlocks(blocks);
+
+        }catch (JSONException e){
+            Log.e(TAG, e.getLocalizedMessage());
+        }
+
+    }
+
+    private void addBlocks(List<Block> blocks) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_BLOCK);
+        db.beginTransaction();
+        try {
+            for(Block block : blocks) {
+                String sqlQuery = "INSERT INTO " + TABLE_BLOCK +" VALUES('"+ block.getDistrictId() + "',' "+ block.getBlockId() + "',' " + block.getBlockName() + "')";
+                db.execSQL(sqlQuery);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e){
+            int i=0;
+            Log.e(TAG, e.getLocalizedMessage());
+        }finally {
+            db.endTransaction();
+        }
+
+        //added to check
+
+        getAllBlocks();
+
 	}
 
 }

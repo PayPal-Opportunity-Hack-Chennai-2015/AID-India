@@ -66,7 +66,7 @@ public class Spinnerscreen extends AppCompatActivity {
         } else if (id == R.id.action_refresh) {
 			Httphandler httphandler = new Httphandler(this);
 			httphandler.getAllDistricts();
-
+            httphandler.getAllBlocks();
 			return true;
 		}
 

@@ -48,6 +48,14 @@ class ChildViewSet(viewsets.ModelViewSet):
     """
     queryset = Child.objects.all()
     serializer_class = ChildSerializer
+    def get_serializer(self, *args, **kwargs):
+        if "data" in kwargs:
+            data = kwargs["data"]
+
+            if isinstance(data, list):
+                kwargs["many"] = True
+
+        return super(ChildViewSet, self).get_serializer(*args, **kwargs)
 
 class SkillViewSet(viewsets.ModelViewSet):
     """
