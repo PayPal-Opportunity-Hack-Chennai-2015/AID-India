@@ -29,6 +29,7 @@ public class Httphandler {
 	private String SERVER_BASE_URL = "http://192.168.117.55:5555";
 	private final String GET_DISTRICT = "/district";
     private final String GET_BLOCK = "/block";
+    private final String GET_VILLAGE = "/village";
 	private String TAG = "Http error";
 	public Httphandler(Context context){
 		this.context = context;
@@ -42,6 +43,11 @@ public class Httphandler {
     public void getAllBlocks(){
         final String url = SERVER_BASE_URL + GET_BLOCK;
         new AsyncHttpTask().execute(url, GET_BLOCK);
+    }
+
+    public void getAllVillages(){
+        final String url = SERVER_BASE_URL + GET_VILLAGE;
+        new AsyncHttpTask().execute(url, GET_VILLAGE);
     }
 
 	public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
@@ -58,7 +64,7 @@ public class Httphandler {
 				URL url = new URL(params[0]);
 				String type = params[1];
 				urlConnection = (HttpURLConnection) url.openConnection();
-
+gi
                  /* optional request header */
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 

@@ -89,10 +89,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return districts;
 	}
 
-    public List<Block> getAllBlocks() {
+    public List<Block> getAllBlocksByDistrict(String district_name) {
         List<Block> blocks = new ArrayList<Block>();
+        String selectQuery1 = "SELECT  * FROM " + TABLE_DISTRICT + " WHERE " + DISTRICT_NAME + " = " + district_name ;
+        SQLiteDatabase db1 = this.getWritableDatabase();
+        Cursor cursor1 = db1.rawQuery(selectQuery1, null);
+        cursor1.moveToFirst();
+
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_BLOCK;
+        String selectQuery = "SELECT  * FROM " + TABLE_BLOCK + " WHERE " + DISTRICT_ID + " = " + cursor1.getInt(0) ;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -183,11 +188,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }finally {
             db.endTransaction();
         }
-
-        //added to check
-
-        getAllBlocks();
-
 	}
 
 }
