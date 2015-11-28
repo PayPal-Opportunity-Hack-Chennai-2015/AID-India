@@ -30,6 +30,7 @@ public class Httphandler {
 	private final String GET_DISTRICT = "/district";
     private final String GET_BLOCK = "/block";
     private final String GET_VILLAGE = "/village";
+    private final String GET_CENTRE = "/centre";
 	private String TAG = "Http error";
 	public Httphandler(Context context){
 		this.context = context;
@@ -50,6 +51,11 @@ public class Httphandler {
         new AsyncHttpTask().execute(url, GET_VILLAGE);
     }
 
+    public void getAllCentres(){
+        final String url = SERVER_BASE_URL + GET_CENTRE;
+        new AsyncHttpTask().execute(url, GET_CENTRE);
+    }
+
 	public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
 
 		JSONObject jsonResponse = null;
@@ -64,6 +70,7 @@ public class Httphandler {
 				URL url = new URL(params[0]);
 				String type = params[1];
 				urlConnection = (HttpURLConnection) url.openConnection();
+
                  /* optional request header */
 				urlConnection.setRequestProperty("Content-Type", "application/json");
 
@@ -123,6 +130,12 @@ public class Httphandler {
                 case GET_VILLAGE:{
                     DatabaseHandler db = new DatabaseHandler(context);
                     db.addVillages(jsonResponse);
+                    break;
+                }
+
+                case GET_CENTRE:{
+                    DatabaseHandler db = new DatabaseHandler(context);
+                    db.addCentres(jsonResponse);
                     break;
                 }
 			}
