@@ -11,3 +11,10 @@ Setup instructions
 
 - Install dependencies
 > pip install -r requirements.pip
+
+Execution
+==================
+- To run the server (this server is only for testing)
+  > cd aiserverproj
+
+  > python manage.py runserver
