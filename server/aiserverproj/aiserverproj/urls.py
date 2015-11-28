@@ -20,6 +20,12 @@ from aiserverapp import views
 
 router = routers.DefaultRouter()
 router.register(r'district', views.DistrictViewSet)
+router.register(r'block', views.BlockViewSet)
+router.register(r'village', views.VillageViewSet)
+router.register(r'centre', views.CentreViewSet)
+router.register(r'child', views.ChildViewSet)
+router.register(r'skill', views.SkillViewSet)
+router.register(r'assessment', views.AssessmentViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
