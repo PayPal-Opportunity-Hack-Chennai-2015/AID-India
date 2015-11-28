@@ -4,6 +4,14 @@ public class Centre {
 	private int village_id;
 	private int centre_id;
 	private String centre_name;
+
+    public Centre(int village_id, int centre_id, String centre_name){
+        this.village_id = village_id;
+        this.centre_id = centre_id;
+        this.centre_name = centre_name;
+    }
+
+    public Centre(){}
 	
 	public int getVillageId() {
 		return village_id;

@@ -4,8 +4,20 @@ public class Village {
 	private int block_id;
 	private int village_id;
 	private String village_name;
-	
-	public int getBlock_id() {
+
+
+    public Village(int block_id, int village_id, String village_name){
+        this.block_id=block_id;
+        this.village_id=village_id;
+        this.village_name=village_name;
+    }
+
+    public Village(){
+
+    }
+
+
+    public int getBlock_id() {
 		return block_id;
 	}
 	public void setBlock_id(int block_id) {
