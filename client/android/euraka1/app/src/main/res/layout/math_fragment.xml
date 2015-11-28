@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/form_back">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:paddingTop="30dp"
+        >
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_1"
+            android:id="@+id/m_switch1"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_2"
+            android:id="@+id/m_switch2"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_3"
+            android:id="@+id/m_switch3"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_4"
+            android:id="@+id/m_switch4"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_5"
+            android:id="@+id/m_switch5"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_6"
+            android:id="@+id/m_switch6"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/math_skill_7"
+            android:id="@+id/m_switch7"
+            android:layout_gravity="right"
+            android:padding="15dp"/>
+        <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/math_skill_8"
+        android:id="@+id/m_switch8"
+        android:layout_gravity="right"
+        android:padding="15dp"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <resources>
+    <string-array name="dis">
+        <item>Chennai</item>
+        <item>Thiruvallur</item>
+        <item>Villupuram</item>
+    </string-array>
+    <string-array name="vil">
+        <item>T.nagar</item>
+        <item>R.A.puram</item>
+        <item>Red Hills</item>
+    </string-array>
+
+    <string-array name="bloc">
+        <item>North</item>
+        <item>East</item>
+        <item>West</item>
+        <item>South</item>
+    </string-array>
+
+    <string-array name="cen">
+        <item>
+            123456
+        </item>
+        <item>
+            345678
+        </item>
+        <item>
+            567890
+        </item>
+    </string-array>
+
+</resources>

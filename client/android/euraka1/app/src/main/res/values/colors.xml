@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ColorPrimary">#FFBB00</color>
+    <color name="ColorPrimaryDark">#eeac00</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="form_back">#EEEEEE</color>
+    <color name="tabsScrollColor">#000000</color>
+</resources>
