@@ -14,6 +14,9 @@ Setup instructions
 
 Execution
 ==================
+- To migrate DB (Everytime when the model is changed)
+  > python manage.py migrate
+
 - To run the server (this server is only for testing)
   > cd aiserverproj
 
