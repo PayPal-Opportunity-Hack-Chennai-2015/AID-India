@@ -81,6 +81,9 @@ public class Spinnerscreen extends AppCompatActivity {
             httphandler.getAllBlocks();
             httphandler.getAllVillages();
             httphandler.getAllCentres();
+            httphandler.postAllChildren();
+            httphandler.postAllAssessments();
+            httphandler.postAllSkills();
 			return true;
 		}
 
@@ -124,7 +127,7 @@ public class Spinnerscreen extends AppCompatActivity {
 		}
 		DistrictspinnerAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, android.R.id.text1, values);
-		DistrictspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		DistrictspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
 		Districtspinner.setAdapter(DistrictspinnerAdapter);
 	}
 

@@ -4,8 +4,16 @@ public class Skill {
 	private int skill_id;
 	private String skill_name;
 	private String subject_name;
-	
-	public int getSkillId() {
+
+    public Skill(int skill_id, String skill_name, String subject_name) {
+        this.skill_id = skill_id;
+        this.skill_name = skill_name;
+        this.subject_name = subject_name;
+    }
+
+    public Skill(){}
+
+    public int getSkillId() {
 		return skill_id;
 	}
 	public void setSkillId(int skillId) {

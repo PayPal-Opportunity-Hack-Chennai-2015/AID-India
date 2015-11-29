@@ -7,9 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.eurekakids.db.datamodel.Assessment;
 import com.eurekakids.db.datamodel.Block;
 import com.eurekakids.db.datamodel.Centre;
 import com.eurekakids.db.datamodel.District;
+import com.eurekakids.db.datamodel.Skill;
 import com.eurekakids.db.datamodel.Student;
 import com.eurekakids.db.datamodel.Village;
 
@@ -29,7 +31,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 6;
 	private String TAG = "SQL ERROR";
 	// Database Name
 	private static final String DATABASE_NAME = "offline_db";
@@ -51,15 +53,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String BLOCK_NAME = "block_name";
     private static final String VILLAGE_ID = "village_id";
     private static final String VILLAGE_NAME = "village_name";
-    private static final String CENTRE_ID = "centre_id";
+    public static final String CENTRE_ID = "centre_id";
     private static final String CENTRE_NAME = "centre_name";
-	private static final String CHILD_ID = "student_id";
-	private static final String CHILD_NAME = "student_name";
-	private static final String CHILD_STD = "student_std";
-	private static final String SKILL_ID = "skill_id";
-	private static final String SKILL_NAME = "skill_name";
-	private static final String SKILL_SUBJECT = "skill_subject";
-	private static final String ASSESSMENT_PASSED = "passed";
+	public static final String CHILD_ID = "student_id";
+	public static final String CHILD_NAME = "student_name";
+	public static final String CHILD_STD = "student_std";
+	public static final String SKILL_ID = "skill_id";
+	public static final String SKILL_NAME = "skill_name";
+	public static final String SKILL_SUBJECT = "skill_subject";
+	public static final String IS_COMPLETED = "is_completed";
+
     public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -90,7 +93,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		String CREATE_CHILDREN_TABLE = "CREATE TABLE " + TABLE_CHILDREN + "("
 				+ CENTRE_ID + " INTEGER," + CHILD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + CHILD_NAME + " TEXT," + CHILD_STD + " TEXT," +
-				" FOREIGN KEY ("+VILLAGE_ID+") REFERENCES "+ TABLE_VILLAGE + "(" + VILLAGE_ID + "));";
+				" FOREIGN KEY ("+ CENTRE_ID +") REFERENCES "+ TABLE_CENTRE + "(" + CENTRE_ID + "));";
 		db.execSQL(CREATE_CHILDREN_TABLE);
 
 		String CREATE_SKILL_TABLE = "CREATE TABLE " + TABLE_SKILL + "("
@@ -98,7 +101,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.execSQL(CREATE_SKILL_TABLE);
 
 		String CREATE_ASSESSMENT_TABLE = "CREATE TABLE " + TABLE_ASSESSMENT + "("
-				+ CHILD_ID + " INTEGER," + SKILL_ID + " INTEGER," + ASSESSMENT_PASSED + " INTEGER," +
+				+ CHILD_ID + " INTEGER," + SKILL_ID + " INTEGER," + IS_COMPLETED + " INTEGER," +
 				" FOREIGN KEY ("+ CHILD_ID +") REFERENCES "+ TABLE_CHILDREN + "(" + CHILD_ID + "), " +
 				" FOREIGN KEY ("+ SKILL_ID +") REFERENCES "+ TABLE_SKILL + "(" + SKILL_ID + "));";
 		db.execSQL(CREATE_ASSESSMENT_TABLE);
@@ -112,6 +115,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BLOCK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VILLAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CENTRE);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILDREN);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSESSMENT);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SKILL);
 
 		// Create tables again
 		onCreate(db);
@@ -137,6 +143,73 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}
 		return districts;
 	}
+
+    public List<Student> getAllStudents() {
+        List<Student> students = new ArrayList<Student>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_CHILDREN;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Student student = new Student();
+                student.setCentreId(cursor.getInt(0));
+                student.setStudentId(cursor.getInt(1));
+                student.setStudentName(cursor.getString(2));
+                student.setStudentStd(cursor.getInt(3));
+
+                students.add(student);
+            } while (cursor.moveToNext());
+        }
+        return students;
+    }
+
+    public List<Skill> getAllSkills() {
+        List<Skill> skills = new ArrayList<Skill>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_SKILL;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Skill skill = new Skill();
+                skill.setSkillId(cursor.getInt(0));
+                skill.setSkillName(cursor.getString(1));
+                skill.setSubjectName(cursor.getString(2));
+
+                skills.add(skill);
+            } while (cursor.moveToNext());
+        }
+        return skills;
+    }
+
+    public List<Assessment> getAllAssessments() {
+        List<Assessment> assessments = new ArrayList<Assessment>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_ASSESSMENT;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Assessment assessment = new Assessment();
+                assessment.setStudentId(cursor.getInt(0));
+                assessment.setSkillId(cursor.getInt(1));
+                assessment.setIsCompleted(cursor.getInt(2));
+
+                assessments.add(assessment);
+            } while (cursor.moveToNext());
+        }
+        return assessments;
+    }
 
     public List<Block> getAllBlocksByDistrict(String district_name) {
         List<Block> blocks = new ArrayList<Block>();
@@ -245,11 +318,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return students;
 	}
 
+    public Assessment getAssessmentById(int child_id, int skill_id){
+
+        String selectQuery = "SELECT  * FROM " + TABLE_ASSESSMENT + " WHERE " + CHILD_ID + " = " + child_id + " AND " + SKILL_ID + " = " + skill_id +";";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Assessment assessment = new Assessment();
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+				int t1 = cursor.getInt(cursor.getColumnIndex(CHILD_ID));
+				int t2 = cursor.getInt(cursor.getColumnIndex(SKILL_ID));
+			int t3 = cursor.getInt(cursor.getColumnIndex(IS_COMPLETED));
+			Log.d("",t1+"");
+			Log.d("",t2+"");
+			Log.d("",t3+"");
+                assessment.setStudentId(cursor.getInt(cursor.getColumnIndex(CHILD_ID)));
+                assessment.setSkillId(cursor.getInt(cursor.getColumnIndex(SKILL_ID)));
+                assessment.setIsCompleted(cursor.getInt(cursor.getColumnIndex(IS_COMPLETED)));
+        }
+        return assessment;
+    }
+
 	public void addStudent(Student student) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(CHILD_ID, student.getStudentId());
 		values.put(CHILD_NAME, student.getStudentName());
 		values.put(CHILD_STD, student.getStudentStd());
 		values.put(CENTRE_ID, student.getCentreId());
@@ -405,6 +498,51 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }finally {
             db.endTransaction();
         }
+    }
+
+    public void updateAssessment(List<Assessment> assessments) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//		db.beginTransaction();
+//        try {
+//            for(Assessment assessment : assessments) {
+//                String sqlQuery = "UPDATE " + TABLE_ASSESSMENT + " SET " + IS_COMPLETED + " = " +  assessment.getIsCompleted() + " where " + SKILL_ID + " = " + assessment.getSkillId() + " AND " + CHILD_ID + " = " + assessment.getStudentId();
+//                db.execSQL(sqlQuery);
+//            }
+//            db.setTransactionSuccessful();
+//        } catch (Exception e){
+//            int i=0;
+//            Log.e(TAG, e.getLocalizedMessage());
+//        }finally {
+//            db.endTransaction();
+//        }
+
+
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		for(Assessment myassessment : assessments) {
+			String selectQuery = "SELECT  * FROM " + TABLE_ASSESSMENT + " WHERE " + CHILD_ID + " = " + myassessment.getStudentId() + " AND " + SKILL_ID + " = " + myassessment.getSkillId() +";";
+
+			Cursor cursor = db.rawQuery(selectQuery, null);
+			// looping through all rows and adding to list
+			if (cursor.moveToFirst()) {
+				ContentValues values = new ContentValues();
+				values.put(IS_COMPLETED, myassessment.getIsCompleted());
+
+				db.update(TABLE_ASSESSMENT, values, SKILL_ID + " = ? AND " + CHILD_ID + " = ?",
+						new String[]{String.valueOf(myassessment.getSkillId()), String.valueOf(myassessment.getStudentId())});
+			}else{
+				ContentValues values = new ContentValues();
+				values.put(CHILD_ID, myassessment.getStudentId());
+				values.put(SKILL_ID, myassessment.getSkillId());
+				values.put(IS_COMPLETED, myassessment.getIsCompleted()); // Contact Phone
+
+				db.insert(TABLE_ASSESSMENT, null, values);
+				 // Closing database connection
+			}
+
+		}
+		db.close();
     }
 
 }

@@ -55,18 +55,18 @@ public class Listscreen extends AppCompatActivity {
 		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 		ArrayList<Student> students = db.getAllStudentsByCentreId(centre_id);
 
-		String[] names = new String[students.size()];
+		Student[] names = new Student[students.size()];
 		for(int i =0; i< students.size(); i++){
-			names[i] = students.get(i).getStudentName();
+			names[i] = students.get(i); //.getStudentName();
 		}
-        ListAdapter nadapter = new ArrayAdapter<String>(this,android.R.layout.simple_expandable_list_item_1,names);
+        ListAdapter nadapter = new ArrayAdapter<Student>(this,android.R.layout.simple_expandable_list_item_1,names);
         ListView nview = (ListView) findViewById(R.id.name_list);
         nview.setAdapter(nadapter);
         nview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemSelected = parent.getItemAtPosition(position).toString();
-                opennav(view, itemSelected);
+                Student studentSelected = (Student)parent.getItemAtPosition(position);
+                opennav(view, studentSelected);
 
             }
         });
@@ -102,9 +102,10 @@ public class Listscreen extends AppCompatActivity {
 		getaddKidIntent.putExtra("CENTRE_ID", centre_id);
         startActivity(getaddKidIntent);
     }
-    public void opennav(View view,String text){
+    public void opennav(View view,Student student){
         Intent navIntent = new Intent(this, tam_page.class);
-        navIntent.putExtra("list_item", text);
+        navIntent.putExtra("list_item", student);
+		navIntent.putExtra("CENTRE_ID", centre_id);
         startActivity(navIntent);
     }
 

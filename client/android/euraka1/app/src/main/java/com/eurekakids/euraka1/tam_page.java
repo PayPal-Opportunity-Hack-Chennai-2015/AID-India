@@ -3,6 +3,7 @@ package com.eurekakids.euraka1;
 /**
  * Created by Kirubanand on 12/09/2015.
  */
+import android.app.Fragment;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -14,13 +15,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+
+import com.eurekakids.com.eurekakids.db.DatabaseHandler;
+import com.eurekakids.db.datamodel.Assessment;
+import com.eurekakids.db.datamodel.Student;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class tam_page extends AppCompatActivity {
 
@@ -35,23 +47,33 @@ public class tam_page extends AppCompatActivity {
     CharSequence Titles[]={"Tamil","English","Maths"};
     int Numboftabs =3;
 
+
+	Student student;
+	int centre_id;
+	List<WeakReference<Fragment>> fragList = new ArrayList<WeakReference<Fragment>>();
+
+	int saved =0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_child);
         Intent list_item = getIntent();
-        String name = list_item.getExtras().getString("list_item");
+        student = (Student) list_item.getSerializableExtra("list_item");
+		centre_id = list_item.getExtras().getInt("CENTRE_ID");
+
        // TextView username = (TextView) findViewById(R.id.username);
        // username.setText(name);
           Toast.makeText(getApplicationContext(),"Quick select Child from Navigation drawer",Toast.LENGTH_LONG).show();
         // Initializing Toolbar and setting it as the actionbar
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
-        setTitle(name);
+        setTitle(student.getStudentName());
 
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
+        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs, student.getStudentId());
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -68,8 +90,17 @@ public class tam_page extends AppCompatActivity {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-        String [] names = {"ram","ravi","anand","susan","basha","christie","divya","edwin","kannan","adam","henry","tamil"};
-        ListAdapter nadapter = new ArrayAdapter<String>(this,android.R.layout.simple_expandable_list_item_1,names);
+
+		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+		final ArrayList<Student> students = db.getAllStudentsByCentreId(centre_id);
+		db.close();
+
+
+		Student[] names = new Student[students.size()];
+		for(int i =0; i< students.size(); i++){
+			names[i] = students.get(i);
+		}
+        ListAdapter nadapter = new ArrayAdapter<Student>(this,android.R.layout.simple_expandable_list_item_1,names);
         ListView nview = (ListView) findViewById(R.id.name_list);
         nview.setAdapter(nadapter);
         nview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -88,6 +119,7 @@ public class tam_page extends AppCompatActivity {
 
                 //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
                 navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
 
                     // This method will trigger on item Click of navigation menu
                     @Override
@@ -108,10 +140,10 @@ public class tam_page extends AppCompatActivity {
                             //Replacing the main content with ContentFragment Which is our Inbox View;
                             case R.id.tamil:
                                 Toast.makeText(getApplicationContext(), "Tamil Selected", Toast.LENGTH_SHORT).show();
-                                tam_fragment fragment = new tam_fragment();
+                                tam_fragment tamil_frament = new tam_fragment();
                                 setTitle(R.string.nav_sub_1);
                                 android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                fragmentTransaction.replace(R.id.frame, fragment);
+                                fragmentTransaction.replace(R.id.frame, tamil_frament);
                                 fragmentTransaction.commit();
                                 return true;
 
@@ -176,6 +208,7 @@ public class tam_page extends AppCompatActivity {
             }
     @Override
     public void onBackPressed() {
+		if(saved ==0 ){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage("Save Changes?");
@@ -193,11 +226,17 @@ public class tam_page extends AppCompatActivity {
                 //if user select "No", just cancel this dialog and continue with app
                 dialog.cancel();
                 Intent getListintent = new Intent(tam_page.this,Listscreen.class);
+				getListintent.putExtra("CENTRE_ID", student.getStudentId());
                 startActivity(getListintent);
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+		}else{
+			super.onBackPressed();
+		}
+
+
     }
 
             @Override
@@ -209,6 +248,30 @@ public class tam_page extends AppCompatActivity {
 
                 if(id == R.id.action_save){
                     Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+					saved = 1;
+					int skill = 1;
+					DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+					List<android.support.v4.app.Fragment> allFragments = getSupportFragmentManager().getFragments();
+					ArrayList<Assessment> assessments = new ArrayList<>();
+					for(android.support.v4.app.Fragment fragment : allFragments){
+
+						if(fragment != null) {
+							ViewGroup viewGroup = (ViewGroup) fragment.getView();
+							ViewGroup linear = (ViewGroup) viewGroup.getChildAt(0);
+							int view_count = linear.getChildCount();
+
+							for (int i = 0; i < view_count; i++) {
+								View view = linear.getChildAt(i);
+								boolean check_value = ((Switch) view).isChecked();
+
+								assessments.add(new Assessment(skill, student.getStudentId(), (check_value == true) ? 1 : 0));
+								skill++;
+							}
+						}
+					}
+
+					db.updateAssessment(assessments);
+					db.close();
                     return true;
                 }
 
