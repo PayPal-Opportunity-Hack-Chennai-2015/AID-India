@@ -48,6 +48,8 @@ public class AddKid extends AppCompatActivity{
 
 		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 		db.addStudent(new Student(centre_id, name, std));
+
+		getListIntent.putExtra("CENTRE_ID", centre_id);
         startActivity(getListIntent);
     }
 }

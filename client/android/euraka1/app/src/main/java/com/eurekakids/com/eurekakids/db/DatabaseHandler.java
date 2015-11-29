@@ -29,7 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	private String TAG = "SQL ERROR";
 	// Database Name
 	private static final String DATABASE_NAME = "offline_db";
@@ -90,7 +90,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		String CREATE_CHILDREN_TABLE = "CREATE TABLE " + TABLE_CHILDREN + "("
 				+ CENTRE_ID + " INTEGER," + CHILD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + CHILD_NAME + " TEXT," + CHILD_STD + " TEXT," +
-				" FOREIGN KEY ("+VILLAGE_ID+") REFERENCES "+ TABLE_VILLAGE + "(" + VILLAGE_ID + "));";
+				" FOREIGN KEY ("+ CENTRE_ID +") REFERENCES "+ TABLE_CENTRE + "(" + CENTRE_ID + "));";
 		db.execSQL(CREATE_CHILDREN_TABLE);
 
 		String CREATE_SKILL_TABLE = "CREATE TABLE " + TABLE_SKILL + "("
@@ -249,7 +249,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(CHILD_ID, student.getStudentId());
 		values.put(CHILD_NAME, student.getStudentName());
 		values.put(CHILD_STD, student.getStudentStd());
 		values.put(CENTRE_ID, student.getCentreId());
