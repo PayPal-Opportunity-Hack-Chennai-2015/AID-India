@@ -10,6 +10,7 @@ import android.util.Log;
 import com.eurekakids.db.datamodel.Block;
 import com.eurekakids.db.datamodel.Centre;
 import com.eurekakids.db.datamodel.District;
+import com.eurekakids.db.datamodel.Student;
 import com.eurekakids.db.datamodel.Village;
 
 import org.json.JSONArray;
@@ -28,7 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	private String TAG = "SQL ERROR";
 	// Database Name
 	private static final String DATABASE_NAME = "offline_db";
@@ -52,7 +53,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String VILLAGE_NAME = "village_name";
     private static final String CENTRE_ID = "centre_id";
     private static final String CENTRE_NAME = "centre_name";
-
+	private static final String CHILD_ID = "student_id";
+	private static final String CHILD_NAME = "student_name";
+	private static final String CHILD_STD = "student_std";
+	private static final String SKILL_ID = "skill_id";
+	private static final String SKILL_NAME = "skill_name";
+	private static final String SKILL_SUBJECT = "skill_subject";
+	private static final String ASSESSMENT_PASSED = "passed";
     public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -72,12 +79,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.execSQL(CREATE_BLOCK_TABLE);
 
         String CREATE_VILLAGE_TABLE = "CREATE TABLE " + TABLE_VILLAGE + "("
-                + BLOCK_ID + " INTEGER," + " FOREIGN KEY ("+BLOCK_ID+") REFERENCES "+ VILLAGE_ID + " INTEGER PRIMARY KEY," + VILLAGE_NAME + " TEXT" + ")";
+                + BLOCK_ID + " INTEGER," + VILLAGE_ID + " INTEGER PRIMARY KEY," + VILLAGE_NAME + " TEXT," +
+				" FOREIGN KEY ("+BLOCK_ID+") REFERENCES "+ TABLE_BLOCK + "(" + BLOCK_ID + "));";
         db.execSQL(CREATE_VILLAGE_TABLE);
 
         String CREATE_CENTRE_TABLE = "CREATE TABLE " + TABLE_CENTRE + "("
-                + VILLAGE_ID + " INTEGER," + " FOREIGN KEY ("+VILLAGE_ID+") REFERENCES "+ CENTRE_ID + " INTEGER PRIMARY KEY," + CENTRE_NAME + " TEXT" + ")";
+                + VILLAGE_ID + " INTEGER," + CENTRE_ID + " INTEGER PRIMARY KEY," + CENTRE_NAME + " TEXT," +
+				" FOREIGN KEY ("+VILLAGE_ID+") REFERENCES "+ TABLE_VILLAGE + "(" + VILLAGE_ID + "));";
         db.execSQL(CREATE_CENTRE_TABLE);
+
+		String CREATE_CHILDREN_TABLE = "CREATE TABLE " + TABLE_CHILDREN + "("
+				+ CENTRE_ID + " INTEGER," + CHILD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + CHILD_NAME + " TEXT," + CHILD_STD + " TEXT," +
+				" FOREIGN KEY ("+VILLAGE_ID+") REFERENCES "+ TABLE_VILLAGE + "(" + VILLAGE_ID + "));";
+		db.execSQL(CREATE_CHILDREN_TABLE);
+
+		String CREATE_SKILL_TABLE = "CREATE TABLE " + TABLE_SKILL + "("
+				+ SKILL_ID + " INTEGER PRIMARY KEY," + SKILL_NAME + " TEXT," +  SKILL_SUBJECT + " TEXT" +")";
+		db.execSQL(CREATE_SKILL_TABLE);
+
+		String CREATE_ASSESSMENT_TABLE = "CREATE TABLE " + TABLE_ASSESSMENT + "("
+				+ CHILD_ID + " INTEGER," + SKILL_ID + " INTEGER," + ASSESSMENT_PASSED + " INTEGER," +
+				" FOREIGN KEY ("+ CHILD_ID +") REFERENCES "+ TABLE_CHILDREN + "(" + CHILD_ID + "), " +
+				" FOREIGN KEY ("+ SKILL_ID +") REFERENCES "+ TABLE_SKILL + "(" + SKILL_ID + "));";
+		db.execSQL(CREATE_ASSESSMENT_TABLE);
 	}
 
 	// Upgrading database
@@ -149,7 +173,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor1.moveToFirst();
 
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_VILLAGE + " WHERE " + BLOCK_ID + " = " + cursor1.getInt(0) ;
+        String selectQuery = "SELECT  * FROM " + TABLE_VILLAGE + " WHERE " + BLOCK_ID + " = " + cursor1.getInt(1) ;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -175,7 +199,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor1.moveToFirst();
 
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_CENTRE + " WHERE " + VILLAGE_ID + " = " + cursor1.getInt(0) ;
+        String selectQuery = "SELECT  * FROM " + TABLE_CENTRE + " WHERE " + VILLAGE_ID + " = " + cursor1.getInt(cursor1.getColumnIndex(VILLAGE_ID)) ;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -192,6 +216,47 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         return centres;
     }
+
+	public int getCentreIdByName(String centre_name) {
+		String selectQuery = "SELECT  * FROM " + TABLE_CENTRE + " WHERE " + CENTRE_NAME + " = '" + centre_name + "'";
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor1 = db.rawQuery(selectQuery, null);
+		cursor1.moveToFirst();
+
+		return cursor1.getInt(cursor1.getColumnIndex(CENTRE_ID));
+	}
+
+	public ArrayList<Student> getAllStudentsByCentreId(int centre_id){
+		String selectQuery = "SELECT  * FROM " + TABLE_CHILDREN + " WHERE " + CENTRE_ID + " = '" + centre_id +"';";
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		ArrayList<Student> students = new ArrayList<>();
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				Student student = new Student();
+				student.setStudentId(cursor.getInt(cursor.getColumnIndex(CHILD_ID)));
+				student.setStudentName(cursor.getString(cursor.getColumnIndex(CHILD_NAME)));
+				student.setStudentStd(cursor.getInt(cursor.getColumnIndex(CHILD_STD)));
+				student.setCentreId(cursor.getInt(cursor.getColumnIndex(CENTRE_ID)));
+				students.add(student);
+			} while (cursor.moveToNext());
+		}
+		return students;
+	}
+
+	public void addStudent(Student student) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(CHILD_ID, student.getStudentId());
+		values.put(CHILD_NAME, student.getStudentName());
+		values.put(CHILD_STD, student.getStudentStd());
+		values.put(CENTRE_ID, student.getCentreId());
+		// Inserting Row
+		db.insert(TABLE_CHILDREN, null, values);
+		db.close();
+	}
 
 	public void addDistricts(JSONArray response) {
 		ArrayList<District> districts = new ArrayList<>();

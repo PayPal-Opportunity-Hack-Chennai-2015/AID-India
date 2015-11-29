@@ -18,18 +18,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.eurekakids.com.eurekakids.db.DatabaseHandler;
+import com.eurekakids.db.datamodel.Student;
+
+import java.util.ArrayList;
+
 
 public class Listscreen extends AppCompatActivity {
 
     ImageButton FAB;
     private Toolbar toolbar;
 
+	private int centre_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.name_list);
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
+		Bundle bundle = getIntent().getExtras();
+		centre_id = bundle.getInt("CENTRE_ID");
 
         FAB = (ImageButton) findViewById(R.id.imageButton);
         FAB.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +51,14 @@ public class Listscreen extends AppCompatActivity {
             }
         });
 
-        String [] names = {"ram","ravi","anand","susan","basha","christie","divya","edwin","kannan","adam","henry","tamil"};
+        //String [] names = {"ram","ravi","anand","susan","basha","christie","divya","edwin","kannan","adam","henry","tamil"};
+		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+		ArrayList<Student> students = db.getAllStudentsByCentreId(centre_id);
+
+		String[] names = new String[students.size()];
+		for(int i =0; i< students.size(); i++){
+			names[i] = students.get(i).getStudentName();
+		}
         ListAdapter nadapter = new ArrayAdapter<String>(this,android.R.layout.simple_expandable_list_item_1,names);
         ListView nview = (ListView) findViewById(R.id.name_list);
         nview.setAdapter(nadapter);
@@ -83,6 +99,7 @@ public class Listscreen extends AppCompatActivity {
 
     public void addtoList(View view) {
         Intent getaddKidIntent = new Intent(this, AddKid.class);
+		getaddKidIntent.putExtra("CENTRE_ID", centre_id);
         startActivity(getaddKidIntent);
     }
     public void opennav(View view,String text){
