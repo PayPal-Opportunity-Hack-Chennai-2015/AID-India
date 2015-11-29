@@ -1,4 +1,6 @@
-from aiserverapp.models import District 
+import csv
+
+from aiserverapp.models import District
 from aiserverapp.models import Block
 from aiserverapp.models import Village
 from aiserverapp.models import Centre
@@ -6,6 +8,8 @@ from aiserverapp.models import Child
 from aiserverapp.models import Skill
 from aiserverapp.models import Assessment
 from rest_framework import viewsets
+from django.http import HttpResponse
+from rest_framework.decorators import api_view
 from aiserverapp.serializers import DistrictSerializer
 from aiserverapp.serializers import BlockSerializer
 from aiserverapp.serializers import VillageSerializer
@@ -13,6 +17,7 @@ from aiserverapp.serializers import CentreSerializer
 from aiserverapp.serializers import ChildSerializer
 from aiserverapp.serializers import SkillSerializer
 from aiserverapp.serializers import AssessmentSerializer
+
 
 class DistrictViewSet(viewsets.ModelViewSet):
     """
@@ -70,3 +75,12 @@ class AssessmentViewSet(viewsets.ModelViewSet):
     """
     queryset = Assessment.objects.all()
     serializer_class = AssessmentSerializer
+
+@api_view(['GET'])
+def center_based_report(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Report.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+    return response

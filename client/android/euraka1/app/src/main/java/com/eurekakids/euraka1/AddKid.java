@@ -14,25 +14,40 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.eurekakids.com.eurekakids.db.DatabaseHandler;
+import com.eurekakids.db.datamodel.Student;
 
 
 public class AddKid extends AppCompatActivity{
 
     private Toolbar toolbar;
+	private int centre_id;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_new_kid);
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
+		Bundle bundle = getIntent().getExtras();
+		centre_id = bundle.getInt("CENTRE_ID");
+
+		toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
     }
 
     public void movetoList(View view)
     {
-        EditText KidName;
+        EditText KidName, KidStd;
         KidName = (EditText) findViewById(R.id.editname);
-        String Tst = KidName.getText().toString();
-        Toast.makeText(AddKid.this,"Added  "+Tst,Toast.LENGTH_SHORT).show();
+		KidStd = (EditText) findViewById(R.id.std);
+
+        String name = KidName.getText().toString();
+		int std = Integer.parseInt(KidStd.getText().toString());
+
+        Toast.makeText(AddKid.this,"Added  "+name,Toast.LENGTH_SHORT).show();
         Intent getListIntent = new Intent(this,Listscreen.class);
+
+		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+		db.addStudent(new Student(centre_id, name, std));
         startActivity(getListIntent);
     }
 }

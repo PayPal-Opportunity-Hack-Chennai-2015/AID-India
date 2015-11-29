@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class Httphandler {
 	Context context;
-	private String SERVER_BASE_URL = "http://192.168.117.55:5555";
+	private String SERVER_BASE_URL = "http://192.168.117.37:8080";
 	private final String GET_DISTRICT = "/district";
     private final String GET_BLOCK = "/block";
     private final String GET_VILLAGE = "/village";

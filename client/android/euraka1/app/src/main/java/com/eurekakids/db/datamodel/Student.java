@@ -5,7 +5,15 @@ public class Student {
 	private int student_id;
 	private String student_name;
 	private int student_std;
-	
+
+	public Student(int c_id, String s_name, int s_std){
+		this.centre_id = c_id;
+		this.student_name = s_name;
+		this.student_std = s_std;
+	}
+
+	public Student(){}
+
 	public int getCentreId() {
 		return centre_id;
 	}

@@ -21,7 +21,9 @@ import android.widget.TextView;
 
 import com.eurekakids.com.eurekakids.db.DatabaseHandler;
 import com.eurekakids.db.datamodel.Block;
+import com.eurekakids.db.datamodel.Centre;
 import com.eurekakids.db.datamodel.District;
+import com.eurekakids.db.datamodel.Village;
 import com.eurekakids.http.Httphandler;
 
 import java.util.List;
@@ -35,7 +37,8 @@ public class Spinnerscreen extends AppCompatActivity {
     private Spinner Centerspinner;
     private TextView Centerid;
     private Toolbar toolbar;
-	DatabaseHandler db;
+
+	private int currentSelectedCenter = 0;
 
 	ArrayAdapter<String> DistrictspinnerAdapter;
 	ArrayAdapter<String> VillagespinnerAdapter;
@@ -86,6 +89,7 @@ public class Spinnerscreen extends AppCompatActivity {
     public void movetoList(View view)
     {
         Intent getListIntent = new Intent(this,Listscreen.class);
+		getListIntent.putExtra("CENTRE_ID", currentSelectedCenter);
         startActivity(getListIntent);
     }
     public void addItemsToDisttrictSpinner(){
@@ -111,9 +115,9 @@ public class Spinnerscreen extends AppCompatActivity {
 //        Blockspinner.setAdapter(BlockspinnerAdapter);
 //        Centerspinner.setAdapter(CenterspinnerAdapter);
 
-		db = new DatabaseHandler(this);
+		DatabaseHandler db = new DatabaseHandler(this);
 		List<District> districts = db.getAllDistricts();
-
+		db.close();
 		String[] values = new String[districts.size()];
 		for(int i =0; i<values.length; i++){
 			values[i] = districts.get(i).getDistrictName();
@@ -136,6 +140,7 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
 
+														  DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 														  List<Block> blocks = db.getAllBlocksByDistrict(itemSelected);
 														  String[] values = new String[blocks.size()];
 														  for(int i =0; i<values.length; i++){
@@ -145,6 +150,7 @@ public class Spinnerscreen extends AppCompatActivity {
 																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
 														  BlockspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 														  Blockspinner.setAdapter(BlockspinnerAdapter);
+														  db.close();
                                                       }
 
                                                       @Override
@@ -161,15 +167,17 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
 
-//														  List<Block> blocks = db.getAllBlocks();
-//														  String[] values = new String[blocks.size()];
-//														  for(int i =0; i<values.length; i++){
-//															  values[i] = blocks.get(i).getBlockName();
-//														  }
-//														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
-//																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
-//														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//														  Villagespinner.setAdapter(VillagespinnerAdapter);
+														  DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+														  List<Centre> centres = db.getAllCentresByVillage(itemSelected);
+														  String[] values = new String[centres.size()];
+														  for(int i =0; i<values.length; i++){
+															  values[i] = centres.get(i).getCentreName();
+														  }
+														  CenterspinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
+																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
+														  CenterspinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+														  Centerspinner.setAdapter(CenterspinnerAdapter);
+														  db.close();
                                                       }
 
                                                       @Override
@@ -180,10 +188,24 @@ public class Spinnerscreen extends AppCompatActivity {
 
 
         );
+
         Blockspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                                      @Override
+
+												   	  @Override
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
+
+														  DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+														  List<Village> villages = db.getAllVillagesByBlock(itemSelected);
+														  String[] values = new String[villages.size()];
+														  for(int i =0; i<values.length; i++){
+															  values[i] = villages.get(i).getVillage_name();
+														  }
+														  VillagespinnerAdapter = new ArrayAdapter<String>(getApplicationContext(),
+																  android.R.layout.simple_spinner_item, android.R.id.text1, values);
+														  VillagespinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+														  Villagespinner.setAdapter(VillagespinnerAdapter);
+														  db.close();
                                                       }
 
                                                       @Override
@@ -198,7 +220,10 @@ public class Spinnerscreen extends AppCompatActivity {
                                                       @Override
                                                       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                                           String itemSelected = parent.getItemAtPosition(position).toString();
-                                                             Centerid.setText(itemSelected);
+														  DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+														  currentSelectedCenter = db.getCentreIdByName(itemSelected);
+														  Centerid.setText(currentSelectedCenter + "");
+														  db.close();
                                                       }
 
                                                       @Override
