@@ -31,7 +31,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 6;
 	private String TAG = "SQL ERROR";
 	// Database Name
 	private static final String DATABASE_NAME = "offline_db";
@@ -115,6 +115,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BLOCK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VILLAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CENTRE);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILDREN);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSESSMENT);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SKILL);
 
 		// Create tables again
 		onCreate(db);
@@ -323,9 +326,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Assessment assessment = new Assessment();
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
-                assessment.setStudentId(cursor.getInt(0));
-                assessment.setSkillId(cursor.getInt(1));
-                assessment.setIsCompleted(cursor.getInt(2));
+				int t1 = cursor.getInt(cursor.getColumnIndex(CHILD_ID));
+				int t2 = cursor.getInt(cursor.getColumnIndex(SKILL_ID));
+			int t3 = cursor.getInt(cursor.getColumnIndex(IS_COMPLETED));
+			Log.d("",t1+"");
+			Log.d("",t2+"");
+			Log.d("",t3+"");
+                assessment.setStudentId(cursor.getInt(cursor.getColumnIndex(CHILD_ID)));
+                assessment.setSkillId(cursor.getInt(cursor.getColumnIndex(SKILL_ID)));
+                assessment.setIsCompleted(cursor.getInt(cursor.getColumnIndex(IS_COMPLETED)));
         }
         return assessment;
     }
@@ -492,20 +501,48 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void updateAssessment(List<Assessment> assessments) {
-        SQLiteDatabase db = this.getWritableDatabase();
+//        SQLiteDatabase db = this.getWritableDatabase();
+//		db.beginTransaction();
+//        try {
+//            for(Assessment assessment : assessments) {
+//                String sqlQuery = "UPDATE " + TABLE_ASSESSMENT + " SET " + IS_COMPLETED + " = " +  assessment.getIsCompleted() + " where " + SKILL_ID + " = " + assessment.getSkillId() + " AND " + CHILD_ID + " = " + assessment.getStudentId();
+//                db.execSQL(sqlQuery);
+//            }
+//            db.setTransactionSuccessful();
+//        } catch (Exception e){
+//            int i=0;
+//            Log.e(TAG, e.getLocalizedMessage());
+//        }finally {
+//            db.endTransaction();
+//        }
 
-        try {
-            for(Assessment assessment : assessments) {
-                String sqlQuery = "UPDATE " + TABLE_ASSESSMENT + "SET" + IS_COMPLETED + " = " +  assessment.getIsCompleted() + " where " + SKILL_ID + " = '" + assessment.getSkillId() + "' AND " + CHILD_ID + " = " + assessment.getStudentId();
-                db.execSQL(sqlQuery);
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception e){
-            int i=0;
-            Log.e(TAG, e.getLocalizedMessage());
-        }finally {
-            db.endTransaction();
-        }
+
+
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		for(Assessment myassessment : assessments) {
+			String selectQuery = "SELECT  * FROM " + TABLE_ASSESSMENT + " WHERE " + CHILD_ID + " = " + myassessment.getStudentId() + " AND " + SKILL_ID + " = " + myassessment.getSkillId() +";";
+
+			Cursor cursor = db.rawQuery(selectQuery, null);
+			// looping through all rows and adding to list
+			if (cursor.moveToFirst()) {
+				ContentValues values = new ContentValues();
+				values.put(IS_COMPLETED, myassessment.getIsCompleted());
+
+				db.update(TABLE_ASSESSMENT, values, SKILL_ID + " = ? AND " + CHILD_ID + " = ?",
+						new String[]{String.valueOf(myassessment.getSkillId()), String.valueOf(myassessment.getStudentId())});
+			}else{
+				ContentValues values = new ContentValues();
+				values.put(CHILD_ID, myassessment.getStudentId());
+				values.put(SKILL_ID, myassessment.getSkillId());
+				values.put(IS_COMPLETED, myassessment.getIsCompleted()); // Contact Phone
+
+				db.insert(TABLE_ASSESSMENT, null, values);
+				 // Closing database connection
+			}
+
+		}
+		db.close();
     }
 
 }

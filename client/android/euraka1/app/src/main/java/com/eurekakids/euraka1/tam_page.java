@@ -47,19 +47,13 @@ public class tam_page extends AppCompatActivity {
     CharSequence Titles[]={"Tamil","English","Maths"};
     int Numboftabs =3;
 
-	tam_fragment tamil_frament = null;
-	eng_fragment english_fragment = null;
-	math_fragment maths_fragment = null;
 
 	Student student;
 	int centre_id;
 	List<WeakReference<Fragment>> fragList = new ArrayList<WeakReference<Fragment>>();
 
+	int saved =0;
 
-	@Override
-	public void onAttachFragment (Fragment fragment) {
-		fragList.add(new WeakReference(fragment));
-	}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +73,7 @@ public class tam_page extends AppCompatActivity {
 
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
+        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs, student.getStudentId());
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -146,11 +140,8 @@ public class tam_page extends AppCompatActivity {
                             //Replacing the main content with ContentFragment Which is our Inbox View;
                             case R.id.tamil:
                                 Toast.makeText(getApplicationContext(), "Tamil Selected", Toast.LENGTH_SHORT).show();
-                                tamil_frament = tam_fragment.newInstance(student.getStudentId());
-
-
+                                tam_fragment tamil_frament = new tam_fragment();
                                 setTitle(R.string.nav_sub_1);
-//								getFragmentManager().get
                                 android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                                 fragmentTransaction.replace(R.id.frame, tamil_frament);
                                 fragmentTransaction.commit();
@@ -164,8 +155,6 @@ public class tam_page extends AppCompatActivity {
                                 setTitle(R.string.nav_sub_2);
                                 android.support.v4.app.FragmentTransaction fragmentTransaction1 = getSupportFragmentManager().beginTransaction();
                                 fragmentTransaction1.replace(R.id.frame, fragment1);
-								fragmentTransaction1.attach(fragment1);
-//								fragmentTransaction1.
                                 fragmentTransaction1.commit();
                                 return true;
                             case R.id.math:
@@ -219,6 +208,7 @@ public class tam_page extends AppCompatActivity {
             }
     @Override
     public void onBackPressed() {
+		if(saved ==0 ){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage("Save Changes?");
@@ -236,11 +226,17 @@ public class tam_page extends AppCompatActivity {
                 //if user select "No", just cancel this dialog and continue with app
                 dialog.cancel();
                 Intent getListintent = new Intent(tam_page.this,Listscreen.class);
+				getListintent.putExtra("CENTRE_ID", student.getStudentId());
                 startActivity(getListintent);
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+		}else{
+			super.onBackPressed();
+		}
+
+
     }
 
             @Override
@@ -252,28 +248,25 @@ public class tam_page extends AppCompatActivity {
 
                 if(id == R.id.action_save){
                     Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
-//					ViewGroup viewGroup=  (ViewGroup)tamil_frament.getView();
-//					int view_count = viewGroup.getChildCount();
-//					for(int i=0; i<view_count; i++){
-//						View view = viewGroup.getChildAt(i);
-//					}
+					saved = 1;
 					int skill = 1;
 					DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 					List<android.support.v4.app.Fragment> allFragments = getSupportFragmentManager().getFragments();
 					ArrayList<Assessment> assessments = new ArrayList<>();
 					for(android.support.v4.app.Fragment fragment : allFragments){
 
-						ViewGroup viewGroup = (ViewGroup) fragment.getView();
-						ViewGroup linear = (ViewGroup) viewGroup.getChildAt(0);
-						int view_count = linear.getChildCount();
+						if(fragment != null) {
+							ViewGroup viewGroup = (ViewGroup) fragment.getView();
+							ViewGroup linear = (ViewGroup) viewGroup.getChildAt(0);
+							int view_count = linear.getChildCount();
 
-						for (int i = 0; i < view_count; i++) {
-							View view = linear.getChildAt(i);
-							boolean check_value = ((Switch) view).isChecked();
+							for (int i = 0; i < view_count; i++) {
+								View view = linear.getChildAt(i);
+								boolean check_value = ((Switch) view).isChecked();
 
-
-							assessments.add(new Assessment(student.getStudentId(), skill, (check_value == true) ?1 : 0));
-							skill++;
+								assessments.add(new Assessment(skill, student.getStudentId(), (check_value == true) ? 1 : 0));
+								skill++;
+							}
 						}
 					}
 
