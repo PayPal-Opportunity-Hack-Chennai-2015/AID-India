@@ -1,6 +1,8 @@
 package com.eurekakids.db.datamodel;
 
-public class Student {
+import java.io.Serializable;
+
+public class Student implements Serializable {
 	private int centre_id;
 	private int student_id;
 	private String student_name;
@@ -13,6 +15,11 @@ public class Student {
 	}
 
 	public Student(){}
+
+	@Override
+	public String toString() {
+		return student_name;
+	}
 
 	public int getCentreId() {
 		return centre_id;
