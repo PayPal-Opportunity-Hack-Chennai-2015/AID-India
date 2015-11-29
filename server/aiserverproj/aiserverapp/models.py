@@ -28,7 +28,7 @@ class Centre(models.Model):
         return str(self.centre_id)
     
 class Child(models.Model):
-    centre_id = models.ForeignKey(Village)
+    centre_id = models.ForeignKey(Centre)
     child_id = models.IntegerField(primary_key=True,default=0)
     child_name = models.CharField(max_length=200)
     child_std = models.IntegerField(default=0)
