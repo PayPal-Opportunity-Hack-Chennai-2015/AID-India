@@ -315,6 +315,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return students;
 	}
 
+    public Assessment getAssessmentById(int child_id, int skill_id){
+
+        String selectQuery = "SELECT  * FROM " + TABLE_ASSESSMENT + " WHERE " + CHILD_ID + " = " + child_id + " AND " + SKILL_ID + " = " + skill_id +";";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Assessment assessment = new Assessment();
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+                assessment.setStudentId(cursor.getInt(0));
+                assessment.setSkillId(cursor.getInt(1));
+                assessment.setIsCompleted(cursor.getInt(2));
+        }
+        return assessment;
+    }
+
 	public void addStudent(Student student) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
