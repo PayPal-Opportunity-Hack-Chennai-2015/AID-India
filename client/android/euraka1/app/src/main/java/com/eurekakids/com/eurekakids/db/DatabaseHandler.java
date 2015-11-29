@@ -476,4 +476,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    private void updateAssessment(List<Assessment> assessments) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            for(Assessment assessment : assessments) {
+                String sqlQuery = "UPDATE " + TABLE_ASSESSMENT + "SET" + IS_COMPLETED + " = " +  assessment.getIsCompleted() + " where " + SKILL_ID + " = '" + assessment.getSkillId() + "' AND " + CHILD_ID + " = " + assessment.getStudentId();
+                db.execSQL(sqlQuery);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e){
+            int i=0;
+            Log.e(TAG, e.getLocalizedMessage());
+        }finally {
+            db.endTransaction();
+        }
+    }
+
 }
