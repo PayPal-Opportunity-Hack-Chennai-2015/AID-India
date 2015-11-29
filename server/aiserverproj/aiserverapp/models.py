@@ -46,4 +46,6 @@ class Assessment(models.Model):
     child_id = models.ForeignKey(Child)
     skill_id = models.ForeignKey(Skill)
     is_completed = models.IntegerField(default=0)
+    class Meta:
+	    unique_together = (("child_id", "skill_id"),)
     
