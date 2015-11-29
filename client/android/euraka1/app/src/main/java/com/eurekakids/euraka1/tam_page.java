@@ -98,7 +98,7 @@ public class tam_page extends AppCompatActivity {
         });
 
 		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-		ArrayList<Student> students = db.getAllStudentsByCentreId(centre_id);
+		final ArrayList<Student> students = db.getAllStudentsByCentreId(centre_id);
 		db.close();
 
 
@@ -146,19 +146,9 @@ public class tam_page extends AppCompatActivity {
                             //Replacing the main content with ContentFragment Which is our Inbox View;
                             case R.id.tamil:
                                 Toast.makeText(getApplicationContext(), "Tamil Selected", Toast.LENGTH_SHORT).show();
-                                tamil_frament = new tam_fragment();
+                                tamil_frament = tam_fragment.newInstance(student.getStudentId());
 
-								int skill = 1;
-								ViewGroup viewGroup = (ViewGroup) v;
-								ViewGroup linear = (ViewGroup) viewGroup.getChildAt(0);
-								int view_count = linear.getChildCount();
 
-								for (int i = 0; i < view_count; i++) {
-									View view = linear.getChildAt(i);
-									getAssessmentValue()
-									((Switch) view).isChecked();
-									//new Assessment(student.getStudentId(), skill, (check_value == true) ?1 : 0);
-								}
                                 setTitle(R.string.nav_sub_1);
 //								getFragmentManager().get
                                 android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -268,7 +258,9 @@ public class tam_page extends AppCompatActivity {
 //						View view = viewGroup.getChildAt(i);
 //					}
 					int skill = 1;
+					DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 					List<android.support.v4.app.Fragment> allFragments = getSupportFragmentManager().getFragments();
+					ArrayList<Assessment> assessments = new ArrayList<>();
 					for(android.support.v4.app.Fragment fragment : allFragments){
 
 						ViewGroup viewGroup = (ViewGroup) fragment.getView();
@@ -278,9 +270,15 @@ public class tam_page extends AppCompatActivity {
 						for (int i = 0; i < view_count; i++) {
 							View view = linear.getChildAt(i);
 							boolean check_value = ((Switch) view).isChecked();
-							new Assessment(student.getStudentId(), skill, (check_value == true) ?1 : 0);
+
+
+							assessments.add(new Assessment(student.getStudentId(), skill, (check_value == true) ?1 : 0));
+							skill++;
 						}
 					}
+
+					db.updateAssessment(assessments);
+					db.close();
                     return true;
                 }
 

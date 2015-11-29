@@ -13,11 +13,24 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 
 import com.eurekakids.db.datamodel.Assessment;
+import com.eurekakids.db.datamodel.Student;
 
 /**
  * Created by Admin on 04-06-2015.
  */
 public class tam_fragment extends Fragment {
+
+	private  Student student;
+
+	public static tam_fragment newInstance(int student_id) {
+		tam_fragment f = new tam_fragment();
+		// Supply index input as an argument.
+		Bundle args = new Bundle();
+		args.putInt("id", student_id);
+		f.setArguments(args);
+		return f;
+	}
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,@Nullable Bundle savedInstanceState) {

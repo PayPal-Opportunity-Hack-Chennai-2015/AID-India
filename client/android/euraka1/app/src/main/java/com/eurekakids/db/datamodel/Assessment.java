@@ -5,15 +5,15 @@ public class Assessment {
 	private int skill_id;
 	private int is_completed;
 
-	public Assessment(int s_id,int skill_id, int is_completed){
-		this.student_id = s_id;
-		this.skill_id = skill_id;
-		this.is_completed = is_completed;
-	}
+    public Assessment(int skill_id, int student_id, int is_completed) {
+        this.skill_id = skill_id;
+        this.student_id = student_id;
+        this.is_completed = is_completed;
+    }
 
-	public Assessment(){}
-
-	public int getStudentId() {
+    public Assessment(){}
+    
+    public int getStudentId() {
 		return student_id;
 	}
 	public void setStudentId(int studentId) {

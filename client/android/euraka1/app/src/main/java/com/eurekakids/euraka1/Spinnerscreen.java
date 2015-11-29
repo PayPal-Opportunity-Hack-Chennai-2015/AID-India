@@ -81,6 +81,9 @@ public class Spinnerscreen extends AppCompatActivity {
             httphandler.getAllBlocks();
             httphandler.getAllVillages();
             httphandler.getAllCentres();
+            httphandler.postAllChildren();
+            httphandler.postAllAssessments();
+            httphandler.postAllSkills();
 			return true;
 		}
 
