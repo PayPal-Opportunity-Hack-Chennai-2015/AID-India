@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:text="@string/District"
             android:textStyle="bold"
+
             android:layout_gravity="left"
             />
 
@@ -50,6 +51,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/block_spinner"
             android:gravity="right"
+            android:background="#000000"
+            android:textColor="#000000"
             android:spinnerMode="dropdown" />
     </LinearLayout>
     <LinearLayout
@@ -69,6 +72,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/village_spinner"
+            android:textColor="#000000"
+            android:background="#000000"
             android:gravity="right"
             android:spinnerMode="dropdown" />
     </LinearLayout>
@@ -91,6 +96,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/center_spinner"
             android:gravity="right"
+            android:background="#000000"
+            android:textColor="#000000"
             android:spinnerMode="dropdown" />
     </LinearLayout>
     <LinearLayout
