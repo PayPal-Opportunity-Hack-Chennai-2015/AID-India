@@ -22,7 +22,7 @@ def fetch_assessment_info():
 
     assessment_tuple = namedtuple('assessment_tuple','centre_id child_count passed_number skill_name')
     centre_id_dict = {}
-    skill_name_set = set()
+    skill_name_set = []
     for info in assessment_info:
         print(type(info))
         named_info = assessment_tuple._make(info)
@@ -31,9 +31,12 @@ def fetch_assessment_info():
             centre_id_dict[centre_id] = {}
         centre_id_dict[centre_id][named_info.skill_name] = named_info.passed_number
         centre_id_dict[centre_id]['child_count'] = named_info.child_count
-        skill_name_set.add(named_info.skill_name)
+        if named_info.skill_name not in skill_name_set:
+            skill_name_set.append(named_info.skill_name)
 		
     final_list = []
+    header_row = ['centre_id','child_count'] + skill_name_set
+    final_list.append(header_row)
     for centre_id in centre_id_dict:
         row = [centre_id]
         row.append(centre_id_dict[centre_id]['child_count'])
@@ -43,10 +46,5 @@ def fetch_assessment_info():
             else:
                 row.append(0)
         final_list.append(row)
-    
-    final_assessment_info = []	
-    for row in final_list:
-        final_assessment_info.append(row)
-		
-    return final_assessment_info
+    return final_list
 	
